@@ -10,10 +10,10 @@
 #define MAXORDER	900000	
 
 #define MINOVL		0.4
-#define AFEW			0.3
+#define AFEW		0.3
 #define MINOUTSEG	0.05
 #define MINDESSEG	0.05
-#define MAXNUM		500000000
+#define MAXNUM		800000000
 
 #define ORT(x) ((x == '+') ? '-' : '+')
 
