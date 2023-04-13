@@ -91,7 +91,8 @@ Internal methods are usually preceded with a _
 package Bio::Tree::TreeFunctionsI;
 use strict;
 
-use UNIVERSAL qw(isa);
+#use UNIVERSAL qw(isa);
+use Scalar::Util::Reftype;
 
 use base qw(Bio::Tree::TreeI);
 
@@ -161,7 +162,8 @@ sub remove_Node {
    my $node = undef;
    unless( ref($input) ) {
        $node = $self->find_node($input);
-   }  elsif( ! $input->isa('Bio::Tree::NodeI') ) {
+   #}  elsif( ! $input->isa('Bio::Tree::NodeI') ) {
+    }  elsif( ! $input->reftype('Bio::Tree::NodeI') ) {
        $self->warn("Did not provide either a valid Bio::Tree::NodeI object or id to remove_node");
        return 0;
    } else { 
@@ -193,6 +195,7 @@ sub get_lineage_nodes {
         $node = $self->find_node($input);
     }
     elsif (! $input->isa('Bio::Tree::NodeI')) {
+    #elsif (! $input->reftype('Bio::Tree::NodeI')) {
         $self->warn("Did not provide either a valid Bio::Tree::NodeI object or id to get_lineage_nodes");
         return;
     }
@@ -252,7 +255,8 @@ sub splice {
     my $preserve_lengths = 0;
     my @nodes_to_remove;
     if (ref($args[0])) {
-        $self->throw("When supplying just a list of Nodes, they must be Bio::Tree::NodeI objects") unless $args[0]->isa('Bio::Tree::NodeI');
+        #$self->throw("When supplying just a list of Nodes, they must be Bio::Tree::NodeI objects") unless $args[0]->isa('Bio::Tree::NodeI');
+        $self->throw("When supplying just a list of Nodes, they must be Bio::Tree::NodeI objects") unless $args[0]->reftype('Bio::Tree::NodeI');
         @nodes_to_remove = @args;
     }
     else {
@@ -373,6 +377,7 @@ sub get_lca {
     my @paths;
     foreach my $node (@nodes) {
 	unless(ref($node) && $node->isa('Bio::Tree::NodeI')) {
+    #unless(ref($node) && $node->reftype('Bio::Tree::NodeI')) {
 	    $self->throw("Cannot process get_lca() with a non-NodeI object ($node)\n");
 	}
         my @path = ($self->get_lineage_nodes($node), $node);
@@ -447,13 +452,15 @@ sub merge_lineage {
     $self->throw("Must supply an object reference") unless ref($thing);
 
     my ($lineage_tree, $lineage_leaf);
-    if ($thing->isa('Bio::Tree::TreeI')) {
+    #if ($thing->isa('Bio::Tree::TreeI')) {
+    if ($thing->reftype('Bio::Tree::TreeI')) {
         my @leaves = $thing->get_leaf_nodes;
         $self->throw("The supplied Tree can only have one leaf") unless @leaves == 1;
         $lineage_tree = $thing;
         $lineage_leaf = shift(@leaves);
     }
-    elsif ($thing->isa('Bio::Tree::NodeI')) {
+    #elsif ($thing->isa('Bio::Tree::NodeI')) {
+    elsif ($thing->reftype('Bio::Tree::NodeI')) {
         $self->throw("The supplied Node must have an ancestor") unless $thing->ancestor;
         $lineage_tree = $self->new(-node => $thing);
         $lineage_leaf = $thing;
@@ -960,7 +967,8 @@ sub is_paraphyletic{
 
 sub reroot {
     my ($self,$new_root) = @_;
-    unless (defined $new_root && $new_root->isa("Bio::Tree::NodeI")) {
+    #unless (defined $new_root && $new_root->isa("Bio::Tree::NodeI")) {
+    unless (defined $new_root && $new_root->reftype("Bio::Tree::NodeI")) {
         $self->warn("Must provide a valid Bio::Tree::NodeI when rerooting");
         return 0;
     }
@@ -1019,7 +1027,8 @@ sub reroot_at_midpoint {
     my $node = shift;
     my $id = shift;
 
-    unless (defined $node && $node->isa("Bio::Tree::NodeI")) {
+    #unless (defined $node && $node->isa("Bio::Tree::NodeI")) {
+    unless (defined $node && $node->reftype("Bio::Tree::NodeI")) {
         $self->warn("Must provide a valid Bio::Tree::NodeI when rerooting");
         return 0;
     }
